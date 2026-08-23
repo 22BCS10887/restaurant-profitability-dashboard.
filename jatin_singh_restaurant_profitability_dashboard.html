@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi-Channel Restaurant Analytics | Created by Jatin Singh</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{
+ --navy:#071a32;--navy2:#0d2a4d;--blue:#3b67c5;--cyan:#22a6b3;
+ --bg:#f3f6fb;--card:#fff;--text:#172033;--muted:#718096;--line:#e5eaf1;
+ --green:#15945a;--red:#d94c4c;--amber:#e39a27;--purple:#7657c8;
+}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+.app{min-height:100vh}.sidebar{position:fixed;z-index:10;left:0;top:0;bottom:0;width:250px;background:linear-gradient(180deg,var(--navy),#0b2748);color:#fff;padding:20px 14px}
+.brand{padding:8px 12px 23px}.brand-icon{width:43px;height:43px;border-radius:12px;background:#fff;color:var(--navy);display:grid;place-items:center;font-size:22px;margin-bottom:12px}.brand h2{font-size:17px;margin:0;line-height:1.3}.brand p{font-size:10px;color:#aebdd0;margin:6px 0 0}.nav{display:flex;flex-direction:column;gap:4px}.nav button{border:0;background:transparent;color:#c9d5e4;text-align:left;padding:11px 13px;border-radius:9px;font-size:12px;cursor:pointer}.nav button:hover,.nav button.active{background:linear-gradient(90deg,#3559a0,#284783);color:#fff}.nav button span{margin-right:9px}.footer{position:absolute;bottom:18px;left:27px;font-size:10px;color:#8fa4bc}.main{margin-left:250px;padding:24px 28px 35px}.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.eyebrow{font-size:11px;color:var(--blue);font-weight:800;text-transform:uppercase;letter-spacing:.08em}.title h1{margin:4px 0;font-size:27px}.title p{margin:0;color:var(--muted);font-size:12px}.actions{display:flex;gap:8px}.actions select,.actions button{border:1px solid #d8e0ea;background:#fff;border-radius:8px;padding:9px 12px;color:#344054;font-size:12px}.actions button{cursor:pointer}.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 5px 18px rgba(21,43,72,.055)}.kpi{padding:16px;position:relative;overflow:hidden}.kpi:after{content:"";position:absolute;right:-22px;top:-25px;width:75px;height:75px;border-radius:50%;background:#eef3ff}.label{font-size:10px;color:var(--muted);font-weight:800;letter-spacing:.04em}.value{font-size:24px;font-weight:850;margin:8px 0}.trend{font-size:10px}.up{color:var(--green)}.down{color:var(--red)}.section-title{font-size:15px;font-weight:800;margin:22px 0 11px}.grid2{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}.panel{padding:17px}.panel h3{margin:0 0 13px;font-size:14px}.sub{font-size:10px;color:var(--muted);margin-top:-8px;margin-bottom:10px}.chart{height:285px}.mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.mini{padding:15px}.mini h4{font-size:11px;margin:0 0 10px;color:#5e6b80}.mini strong{font-size:20px}.progress{height:7px;background:#edf1f6;border-radius:10px;overflow:hidden;margin:10px 0 5px}.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:10px}.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;font-size:11px}.table th{background:#f7f9fc;color:#69768a;text-align:left;font-size:10px}.table th,.table td{padding:10px;border-bottom:1px solid #edf0f4}.badge{display:inline-block;padding:4px 7px;border-radius:20px;background:#edf3ff;color:#315ca8;font-weight:800;font-size:9px}.good{background:#eaf8f0;color:#16834b}.warn{background:#fff5e7;color:#a66b16}.insights{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.insight{padding:15px}.insight .num{font-size:10px;color:var(--blue);font-weight:900}.insight h4{margin:5px 0 7px;font-size:12px}.insight p{font-size:10px;color:#667386;line-height:1.55;margin:0}.hidden{display:none!important}.waterfall-note{font-size:10px;color:var(--muted);line-height:1.5}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.insights{grid-template-columns:1fr}.sidebar{width:210px}.main{margin-left:210px}.mini-grid{grid-template-columns:1fr}}
+@media(max-width:650px){.sidebar{position:static;width:100%;height:auto}.footer{position:static;margin:20px 12px 0}.main{margin-left:0;padding:16px}.topbar{display:block}.actions{margin-top:12px;flex-wrap:wrap}.kpis{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+ <div class="brand">
+  <div class="brand-icon">🍽️</div>
+  <h2>Multi-Channel<br>Restaurant Analytics</h2>
+  <p>Cost Structure & Channel-Wise Profitability</p>
+ </div>
+ <nav class="nav">
+  <button class="active" onclick="showTab('overview',this)"><span>▣</span>Executive Overview</button>
+  <button onclick="showTab('cost',this)"><span>◉</span>Cost Structure</button>
+  <button onclick="showTab('profit',this)"><span>◈</span>Channel Profitability</button>
+  <button onclick="showTab('menu',this)"><span>◆</span>Menu Profitability</button>
+  <button onclick="showTab('trends',this)"><span>↗</span>Revenue & Profit Trends</button>
+  <button onclick="showTab('breakeven',this)"><span>◎</span>Break-even Analysis</button>
+  <button onclick="showTab('insights',this)"><span>★</span>Insights & Recommendations</button>
+ </nav>
+ <div class="footer">Created by <b>Jatin Singh</b> • 2026</div>
+</aside>
+
+<main class="main">
+<div class="topbar">
+ <div class="title"><div class="eyebrow">Management Dashboard</div><h1 id="pageTitle">Executive KPI Overview</h1><p>Multi-channel restaurant financial performance | May 2024</p></div>
+ <div class="actions"><select id="period"><option>May 2024</option><option>April 2024</option><option>March 2024</option></select><select><option>All Channels</option><option>Dine-in</option><option>Delivery (Own)</option><option>Online Platforms</option></select><button onclick="window.print()">Print / PDF</button></div>
+</div>
+
+<div id="overview" class="tab">
+<div class="kpis">
+ <div class="card kpi"><div class="label">TOTAL REVENUE</div><div class="value">₹1.25 Cr</div><div class="trend up">▲ 12.8% vs Apr</div></div>
+ <div class="card kpi"><div class="label">TOTAL COST</div><div class="value">₹78.45 L</div><div class="trend down">▲ 8.9% vs Apr</div></div>
+ <div class="card kpi"><div class="label">GROSS PROFIT</div><div class="value">₹46.80 L</div><div class="trend up">▲ 17.3% vs Apr</div></div>
+ <div class="card kpi"><div class="label">GROSS MARGIN</div><div class="value">37.4%</div><div class="trend up">▲ 1.6 pp vs Apr</div></div>
+ <div class="card kpi"><div class="label">NET PROFIT</div><div class="value">₹28.35 L</div><div class="trend up">▲ 18.7% vs Apr</div></div>
+</div>
+<div class="section-title">Performance Snapshot</div>
+<div class="grid2">
+ <div class="card panel"><h3>Revenue by Channel</h3><div class="sub">Share of total revenue</div><div class="chart"><canvas id="revChart"></canvas></div></div>
+ <div class="card panel"><h3>Profit Contribution</h3><div class="sub">Channel contribution to total profit</div><div class="chart"><canvas id="profitChart"></canvas></div></div>
+</div>
+<div class="section-title">Operational KPIs</div>
+<div class="mini-grid">
+ <div class="card mini"><h4>Total Orders</h4><strong>18,742</strong><div class="progress"><i style="width:82%"></i></div><small class="up">▲ 10.8% vs Apr</small></div>
+ <div class="card mini"><h4>Average Order Value</h4><strong>₹667</strong><div class="progress"><i style="width:67%"></i></div><small class="up">▲ 1.6% vs Apr</small></div>
+ <div class="card mini"><h4>Food Cost Ratio</h4><strong>31.6%</strong><div class="progress"><i style="width:63%"></i></div><small class="up">▼ 0.8 pp vs Apr</small></div>
+</div>
+</div>
+
+<div id="cost" class="tab hidden">
+<div class="section-title">Cost Structure</div>
+<div class="grid2">
+ <div class="card panel"><h3>Total Cost Breakdown</h3><div class="chart"><canvas id="costChart"></canvas></div></div>
+ <div class="card panel"><h3>Cost Trend</h3><div class="chart"><canvas id="costTrend"></canvas></div></div>
+</div>
+<div class="section-title">Cost Control Priorities</div>
+<div class="card panel table-wrap"><table class="table"><tr><th>Cost Head</th><th>Amount</th><th>% of Cost</th><th>Management Priority</th></tr>
+<tr><td>Food Cost</td><td>₹24.75 L</td><td>31.6%</td><td><span class="badge warn">High</span></td></tr>
+<tr><td>Labor Cost</td><td>₹16.80 L</td><td>21.4%</td><td><span class="badge">Medium</span></td></tr>
+<tr><td>Rent & Utilities</td><td>₹10.15 L</td><td>12.9%</td><td><span class="badge">Medium</span></td></tr>
+<tr><td>Delivery Cost</td><td>₹8.95 L</td><td>11.4%</td><td><span class="badge warn">High</span></td></tr>
+<tr><td>Packaging</td><td>₹6.20 L</td><td>7.9%</td><td><span class="badge">Medium</span></td></tr>
+</table></div>
+</div>
+
+<div id="profit" class="tab hidden">
+<div class="section-title">Channel-Wise Profitability</div>
+<div class="card panel table-wrap"><table class="table"><tr><th>Channel</th><th>Revenue</th><th>Total Cost</th><th>Profit</th><th>Margin</th><th>Orders</th><th>AOV</th></tr>
+<tr><td>Dine-in</td><td>₹62.50 L</td><td>₹28.30 L</td><td>₹16.20 L</td><td><span class="badge good">25.9%</span></td><td>7,245</td><td>₹862</td></tr>
+<tr><td>Delivery (Own)</td><td>₹31.25 L</td><td>₹24.05 L</td><td>₹7.20 L</td><td><span class="badge good">23.0%</span></td><td>6,128</td><td>₹510</td></tr>
+<tr><td>Online Platforms</td><td>₹37.50 L</td><td>₹32.65 L</td><td>₹4.95 L</td><td><span class="badge warn">13.2%</span></td><td>5,369</td><td>₹698</td></tr></table></div>
+<div class="grid2" style="margin-top:14px"><div class="card panel"><h3>Profit Margin by Channel</h3><div class="chart"><canvas id="marginChart"></canvas></div></div>
+<div class="card panel"><h3>Channel Economics</h3><div class="waterfall-note">Dine-in is the most profitable channel because it avoids delivery and platform commission leakage. Own delivery retains more value than third-party platforms, while platform economics are compressed by commission, discounts and delivery expenses.</div></div></div>
+</div>
+
+<div id="menu" class="tab hidden">
+<div class="section-title">Menu Item Profitability</div>
+<div class="card panel table-wrap"><table class="table"><tr><th>Menu Item</th><th>Revenue</th><th>Profit</th><th>Margin</th><th>Recommendation</th></tr>
+<tr><td>Paneer Tikka</td><td>₹4.85 L</td><td>₹2.10 L</td><td>43.3%</td><td><span class="badge good">Scale</span></td></tr>
+<tr><td>Butter Chicken</td><td>₹6.25 L</td><td>₹2.45 L</td><td>39.2%</td><td><span class="badge good">Promote</span></td></tr>
+<tr><td>Veg Biryani</td><td>₹3.30 L</td><td>₹1.25 L</td><td>37.9%</td><td><span class="badge good">Promote</span></td></tr>
+<tr><td>French Fries</td><td>₹2.10 L</td><td>₹0.21 L</td><td>10.0%</td><td><span class="badge warn">Reprice</span></td></tr>
+<tr><td>Chocolate Cake</td><td>₹1.90 L</td><td>₹0.06 L</td><td>3.2%</td><td><span class="badge warn">Review</span></td></tr>
+</table></div>
+</div>
+
+<div id="trends" class="tab hidden">
+<div class="section-title">Six-Month Performance Trend</div>
+<div class="grid2"><div class="card panel"><h3>Revenue Trend</h3><div class="chart"><canvas id="revenueTrend"></canvas></div></div>
+<div class="card panel"><h3>Profit Trend</h3><div class="chart"><canvas id="profitTrend"></canvas></div></div></div>
+</div>
+
+<div id="breakeven" class="tab hidden">
+<div class="section-title">Break-even & Margin of Safety</div>
+<div class="grid2"><div class="card panel"><h3>Contribution Analysis</h3><div class="chart"><canvas id="breakChart"></canvas></div></div>
+<div class="card panel"><h3>Break-even Summary</h3><table class="table">
+<tr><td>Total Fixed Cost</td><td><b>₹21.00 L</b></td></tr><tr><td>Contribution / Profit</td><td><b>₹28.35 L</b></td></tr><tr><td>Break-even Revenue</td><td><b>₹92.11 L</b></td></tr><tr><td>Actual Revenue</td><td><b>₹1.25 Cr</b></td></tr><tr><td>Margin of Safety</td><td><b class="up">₹32.89 L / 26.3%</b></td></tr>
+</table></div></div>
+</div>
+
+<div id="insights" class="tab hidden">
+<div class="section-title">Key Insights & Recommendations</div>
+<div class="insights">
+<div class="card insight"><div class="num">01</div><h4>Protect Dine-in Margin</h4><p>Dine-in has the highest margin at 25.9%. Improve table utilization, premium add-ons and upselling.</p></div>
+<div class="card insight"><div class="num">02</div><h4>Shift Repeat Customers Direct</h4><p>Own delivery generates 23.0% margin. Encourage repeat customers to order through the restaurant's direct channel.</p></div>
+<div class="card insight"><div class="num">03</div><h4>Control Platform Leakage</h4><p>Third-party platforms deliver only 13.2% margin. Negotiate commissions and reduce discount dependency.</p></div>
+<div class="card insight"><div class="num">04</div><h4>Attack Food Cost</h4><p>Food cost is the largest cost component at 31.6%. Focus on procurement, recipe standardization, portion control and waste.</p></div>
+<div class="card insight"><div class="num">05</div><h4>Optimize Weak Menu Items</h4><p>Low-margin items should be repriced, redesigned or removed after considering their strategic role in the menu.</p></div>
+<div class="card insight"><div class="num">06</div><h4>Maintain Break-even Buffer</h4><p>Revenue is ₹32.89 L above break-even, giving the business a 26.3% margin of safety.</p></div>
+</div>
+</div>
+</main>
+</div>
+
+<script>
+const common={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom",labels:{usePointStyle:true,padding:16,font:{size:10}}}}};
+const dough=(id,labels,data)=>new Chart(document.getElementById(id),{type:"doughnut",data:{labels,datasets:[{data,borderWidth:3}]},options:{...common,cutout:"66%"}});
+dough("revChart",["Dine-in","Delivery (Own)","Online Platforms"],[62.5,31.25,37.5]);
+dough("profitChart",["Dine-in","Delivery (Own)","Online Platforms"],[16.2,7.2,4.95]);
+dough("costChart",["Food","Labor","Rent & Utilities","Delivery","Packaging","Marketing","Other"],[24.75,16.8,10.15,8.95,6.2,4.25,7.4]);
+
+new Chart(document.getElementById("costTrend"),{type:"line",data:{labels:["Dec","Jan","Feb","Mar","Apr","May"],datasets:[
+{label:"Total Cost",data:[75,74,77,76,82,78.45],tension:.3},{label:"Food Cost",data:[24,24,25,25,26,24.75],tension:.3},{label:"Delivery",data:[8,8,8.2,8.4,9.1,8.95],tension:.3}]},options:common});
+new Chart(document.getElementById("marginChart"),{type:"bar",data:{labels:["Dine-in","Own Delivery","Online Platforms"],datasets:[{label:"Margin %",data:[25.9,23,13.2]}]},options:{...common,scales:{y:{beginAtZero:true,max:30}}}});
+new Chart(document.getElementById("revenueTrend"),{type:"line",data:{labels:["Dec","Jan","Feb","Mar","Apr","May"],datasets:[
+{label:"Dine-in",data:[50,53,55,57,60,62.5],tension:.3},{label:"Own Delivery",data:[25,26,27,28,30,31.25],tension:.3},{label:"Platforms",data:[29,31,32,33,35,37.5],tension:.3}]},options:common});
+new Chart(document.getElementById("profitTrend"),{type:"line",data:{labels:["Dec","Jan","Feb","Mar","Apr","May"],datasets:[
+{label:"Dine-in",data:[13.5,14.5,15.2,15,15.6,16.2],tension:.3},{label:"Own Delivery",data:[5.8,6.2,6.5,6.6,6.9,7.2],tension:.3},{label:"Platforms",data:[4.2,4.4,4.5,4.6,4.8,4.95],tension:.3}]},options:common});
+new Chart(document.getElementById("breakChart"),{type:"bar",data:{labels:["Dine-in","Own Delivery","Platforms","Net Profit"],datasets:[{label:"₹ Lakh",data:[16.2,7.2,4.95,28.35]}]},options:{...common,scales:{y:{beginAtZero:true}}}});
+
+function showTab(id,btn){
+ document.querySelectorAll(".tab").forEach(x=>x.classList.add("hidden"));
+ document.getElementById(id).classList.remove("hidden");
+ document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));
+ btn.classList.add("active");
+ const titles={overview:"Executive KPI Overview",cost:"Cost Structure",profit:"Channel-Wise Profitability",menu:"Menu Item Profitability",trends:"Revenue & Profit Trends",breakeven:"Break-even Analysis",insights:"Insights & Recommendations"};
+ document.getElementById("pageTitle").textContent=titles[id];
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+</script>
+</body>
+</html>
